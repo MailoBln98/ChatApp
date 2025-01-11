@@ -1,0 +1,39 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
+    alias(libs.plugins.android.application) apply false
+}
+
+allprojects {
+    configurations.all {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'org.jetbrains.kotlin') {
+                details.useVersion '1.8.10' // Einheitliche Kotlin-Version
+            }
+        }
+    }
+}
+
+subprojects {
+    afterEvaluate { project ->
+        if (project.plugins.hasPlugin("com.android.application") || project.plugins.hasPlugin("com.android.library")) {
+            project.android {
+                buildFeatures {
+                    buildConfig = true // Aktiviert BuildConfig
+                }
+                buildTypes {
+                    debug {
+                        buildConfigField "boolean", "DEBUG", "true"
+                    }
+                    release {
+                        buildConfigField "boolean", "DEBUG", "false"
+                        minifyEnabled false // Deaktiviert ProGuard für einfaches Testen
+                        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+

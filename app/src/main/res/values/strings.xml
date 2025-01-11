@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">AppNew</string>
+    <string name="message_hint">Nachricht eingeben</string>
+    <string name="send_button_description">Nachricht senden</string>
+    <string name="location_button_description">Standort senden</string>
+    <string name="btn_chats">Aktuelle Chats</string>
+    <string name="btn_device_search">Gerät suchen</string>
+    <string name="btn_chat_start">Chat starten</string>
+</resources>
+
