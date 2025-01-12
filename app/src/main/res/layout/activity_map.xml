@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Button zum Zurückgehen zur Seite zuvor -->
+    <!-- Button to go back to the previous activity -->
     <Button
         android:id="@+id/back_button"
         android:layout_width="wrap_content"

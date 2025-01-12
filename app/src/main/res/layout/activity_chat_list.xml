@@ -1,63 +1,50 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.ChatDetailActivity">
+    tools:context=".view.ChatListActivity">
 
-    <!-- Titelansicht für die Chat-Details -->
-    <TextView
-        android:id="@+id/chat_detail_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chat Details"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- RecyclerView zur Anzeige der Nachrichten -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chat_recycler_view"
+        android:id="@+id/recycler_view_chats"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/chat_detail_view"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/message_input"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:scrollbars="vertical" />
 
-    <!-- Eingabefeld für Nachrichten -->
     <EditText
         android:id="@+id/message_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Enter your message"
-        android:layout_margin="16dp"
+        android:hint="@string/message_hint"
+        android:inputType="text"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/send_button"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- Sende-Button für Nachrichten -->
-    <Button
+    <ImageButton
         android:id="@+id/send_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send"
-        android:layout_margin="8dp"
-        app:layout_constraintEnd_toStartOf="@id/send_location_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_send"
+        android:contentDescription="@string/send_button_description"
+        android:background="?attr/selectableItemBackground"
+        app:layout_constraintEnd_toStartOf="@id/location_button"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- Button zum Teilen des aktuellen Standorts -->
-    <Button
-        android:id="@+id/send_location_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send Location"
-        android:layout_margin="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+    <ImageButton
+        android:id="@+id/location_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_location"
+        android:contentDescription="@string/location_button_description"
+        android:background="?attr/selectableItemBackground"
+        app:layout_constraintStart_toEndOf="@id/send_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
