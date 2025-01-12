@@ -47,10 +47,12 @@ dependencies {
     // Room Database
     implementation "androidx.room:room-runtime:2.5.2"
     implementation libs.androidx.espresso.contrib
+    implementation libs.core
     testImplementation libs.androidx.junit
     testImplementation libs.androidx.espresso.core
     testImplementation libs.androidx.rules
     testImplementation libs.androidx.espresso.intents
+    androidTestImplementation libs.androidx.core.testing
     annotationProcessor "androidx.room:room-compiler:2.5.2"
 
     // Play Services Location

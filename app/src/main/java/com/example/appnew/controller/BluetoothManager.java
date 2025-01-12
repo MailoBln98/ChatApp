@@ -151,4 +151,8 @@ public class BluetoothManager {
     public boolean isBluetoothEnabled() {
         return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
     }
+
+    public boolean isConnected() {
+        return bluetoothSocket != null && bluetoothSocket.isConnected();
+    }
 }

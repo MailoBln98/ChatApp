@@ -1,6 +1,6 @@
 package com.example.appnew.view;
 
-import android.content.Intent;
+import android.Manifest;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,13 +11,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.app.ActivityCompat;
 
 import com.example.appnew.R;
-import com.example.appnew.controller.LocationProvider;
 import com.example.appnew.controller.MessageController;
 import com.example.appnew.model.Message;
-
-import org.jetbrains.annotations.VisibleForTesting;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.Collections;
 
@@ -27,6 +30,8 @@ public class ChatListActivity extends AppCompatActivity {
 
     private MessageController messageController;
     private ChatListAdapter chatListAdapter;
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +48,7 @@ public class ChatListActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recycler_view_chats);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         chatListAdapter = new ChatListAdapter(message -> {
-            // Intent für den Start der Chat-Detailansicht
             Log.d(TAG, "Message clicked: " + message.getContent());
-            Intent intent = new Intent(ChatListActivity.this, ChatDetailActivity.class);
-            intent.putExtra("chat_id", message.getId());
-            startActivity(intent);
         });
 
         recyclerView.setAdapter(chatListAdapter);
@@ -62,40 +63,63 @@ public class ChatListActivity extends AppCompatActivity {
             }
         });
 
-        // Hinzufügen der Funktionalität zum Abrufen des Standorts
+        // Standort-Client initialisieren
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Standortanforderungen konfigurieren
+        LocationRequest locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(1000); // Intervall für kontinuierliche Updates
+
+        // Standort-Aktualisierungs-Callback
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                if (locationResult != null) {
+                    for (Location location : locationResult.getLocations()) {
+                        if (location != null) {
+                            String locationMessage = "Latitude: " + location.getLatitude() + ", Longitude: " + location.getLongitude();
+                            Toast.makeText(ChatListActivity.this, locationMessage, Toast.LENGTH_LONG).show();
+                            Log.d(TAG, "Current location: " + locationMessage);
+                        }
+                    }
+                }
+            }
+        };
+
         findViewById(R.id.location_button).setOnClickListener(v -> {
-            LocationProvider locationProvider = new LocationProvider(this);
-
-            locationProvider.getCurrentLocation(new LocationProvider.CustomLocationCallback() {
-                @Override
-                public void onLocationRetrieved(Location location) {
-                    String locationMessage = "Latitude: " + location.getLatitude() + ", Longitude: " + location.getLongitude();
-                    Toast.makeText(ChatListActivity.this, locationMessage, Toast.LENGTH_LONG).show();
-
-                    // Optional: Weiterleiten oder Senden des Standorts
-                    Log.d(TAG, "Location retrieved: " + locationMessage);
-                }
-
-                @Override
-                public void onError(String errorMessage) {
-                    Toast.makeText(ChatListActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                    Log.e(TAG, "Error retrieving location: " + errorMessage);
-                }
-            });
+            requestLocationUpdates(locationRequest);
         });
     }
 
+    private void requestLocationUpdates(LocationRequest locationRequest) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, getMainLooper());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (fusedLocationClient != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
+    }
+
+    public MessageController getMessageController() {
+        return messageController;
+    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish(); // Schließt die aktuelle Aktivität und kehrt zur vorherigen zurück
+            // Beende die aktuelle Aktivität und kehre zur vorherigen zurück
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @VisibleForTesting
-    public MessageController getMessageController() {
-        return messageController;
-    }
 }

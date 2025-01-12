@@ -85,13 +85,12 @@ public class DeviceListActivity extends Activity {
         pairedListView.setOnItemClickListener(deviceClickListener);
         availableListView.setOnItemClickListener(deviceClickListener);
 
-        // Set up Cancel button
-        findViewById(R.id.cancel_button).setOnClickListener(v -> {
-            // Finish the current activity and go back to the previous one
-            finish();
-        });
+        findViewById(R.id.cancel_button).setOnClickListener(v -> finish());
 
-        // Start permissions and device discovery
+        // Lade Testdaten, wenn Debug-Modus aktiv ist
+        loadMockDataForTesting();
+
+        // Starte die Berechtigungsprüfung
         if (!isPermissionRequested) {
             requestBluetoothPermissions();
         }
@@ -100,7 +99,7 @@ public class DeviceListActivity extends Activity {
     private void requestBluetoothPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-            isPermissionRequested = true; // Set flag
+            isPermissionRequested = true;
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN},
                     REQUEST_CODE_BLUETOOTH_PERMISSIONS);
@@ -124,9 +123,6 @@ public class DeviceListActivity extends Activity {
         } else {
             pairedDevicesAdapter.add("No paired devices found");
         }
-
-        // Add mock data for testing if in debug mode
-        loadMockDataForTesting();
     }
 
     private void loadMockDataForTesting() {
@@ -194,5 +190,13 @@ public class DeviceListActivity extends Activity {
                 Toast.makeText(this, "Permissions denied. Some features may not work.", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public ArrayAdapter<String> getPairedDevicesAdapter() {
+        return pairedDevicesAdapter;
+    }
+
+    public ArrayAdapter<String> getAvailableDevicesAdapter() {
+        return availableDevicesAdapter;
     }
 }

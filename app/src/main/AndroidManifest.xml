@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.appnew">
 
     <!-- Berechtigungen -->
@@ -8,16 +9,17 @@
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="ChatApp"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppNew">
 
+        <!-- MainActivity (Standard: Simulation) -->
         <activity
             android:name=".view.MainActivity"
             android:exported="true">
@@ -27,8 +29,25 @@
             </intent-filter>
         </activity>
 
+        <!-- PresentationActivity -->
+        <activity
+            android:name=".view.PresentationActivity"
+            android:exported="true"
+            tools:ignore="Instantiatable">
+            <!-- Keine Standard-Launcher-Intents -->
+        </activity>
+
         <!-- Andere Aktivitäten -->
-        <activity android:name=".view.DeviceListActivity" />
+        <activity
+            android:name=".view.DeviceListActivity"
+            android:exported="true">
+            <intent-filter>
+                <!-- Intent-Filter hinzufügen für spezifische Zwecke -->
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".view.ChatListActivity" />
         <activity android:name=".view.IncomingRequestActivity" />
         <activity android:name=".view.ChatDetailActivity" />
@@ -36,4 +55,3 @@
 
     </application>
 </manifest>
-

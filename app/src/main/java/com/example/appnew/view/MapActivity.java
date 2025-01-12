@@ -48,15 +48,18 @@ public class MapActivity extends AppCompatActivity {
                 mapView.getOverlays().add(marker);
 
             } catch (Exception e) {
-                // Fehler bei der Verarbeitung der Standortdaten
                 Toast.makeText(this, "Ungültige Standortdaten", Toast.LENGTH_SHORT).show();
                 finish();
             }
         } else {
-            // Kein Standort übergeben
             Toast.makeText(this, "Kein Standort verfügbar", Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        // Back-Button Funktionalität
+        findViewById(R.id.back_button).setOnClickListener(v -> {
+            finish(); // Schließt die aktuelle Aktivität
+        });
     }
 
     @Override
@@ -69,5 +72,11 @@ public class MapActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         mapView.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Toast.makeText(this, "Zurück zur vorherigen Ansicht", Toast.LENGTH_SHORT).show();
     }
 }

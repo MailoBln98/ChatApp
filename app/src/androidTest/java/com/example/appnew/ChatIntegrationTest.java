@@ -13,34 +13,38 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Collections;
+
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.example.appnew.view.ChatListAdapter.withMessageContent;
 
 @RunWith(AndroidJUnit4.class)
-public class ChatListUpdateTest {
+public class ChatIntegrationTest {
 
     @Before
     public void setUp() {
-        // Starte die ChatListActivity vor jedem Test
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.setClassName("com.example.appnew", "com.example.appnew.view.ChatListActivity");
-        ActivityScenario.launch(intent);
+        // Initialisiere die `ChatListActivity` vor jedem Test
+        ActivityScenario.launch(ChatListActivity.class);
     }
 
     @Test
-    public void testRecyclerViewUpdateOnNewMessage() {
+    public void testMessageDisplayedInChatList() {
         // Erstelle eine neue Nachricht
-        Message newMessage = new Message("TestSender", "NewContent", System.currentTimeMillis());
+        Message testMessage = new Message("TestUser", "Integration Test Message", System.currentTimeMillis());
 
-        // Füge die Nachricht über den Controller hinzu
+        // Lade die Aktivität und füge die Nachricht zur Datenbank hinzu
         ActivityScenario<ChatListActivity> scenario = ActivityScenario.launch(ChatListActivity.class);
         scenario.onActivity(activity -> {
-            activity.getMessageController().addMessage(newMessage);
+            activity.getMessageController().addMessage(testMessage);
         });
 
-        // Überprüfe, ob die Nachricht angezeigt wird
+        // Überprüfe, ob die Nachricht im RecyclerView angezeigt wird
         onView(withId(R.id.recycler_view_chats))
-                .perform(RecyclerViewActions.scrollToHolder(withMessageContent("NewContent")));
+                .perform(RecyclerViewActions.scrollToHolder(withMessageContent("Integration Test Message")));
     }
+
+
 }

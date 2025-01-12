@@ -13,6 +13,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
 import com.example.appnew.view.MainActivity;
+import com.example.appnew.view.PresentationActivity;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,7 +25,7 @@ import org.junit.runner.RunWith;
 public class MainActivityUITest {
 
     @Rule
-    public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<PresentationActivity> activityRule = new ActivityTestRule<>(PresentationActivity.class);
 
     @Before
     public void setUp() {
