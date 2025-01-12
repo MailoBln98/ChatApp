@@ -11,15 +11,43 @@ import com.example.appnew.controller.BluetoothManager;
 import com.example.appnew.controller.MessageController;
 import com.example.appnew.model.Message;
 
+/**
+ * Die MainActivity simuliert die Verbindung und den Datenaustausch zwischen zwei Geräten
+ * über Bluetooth. Außerdem startet sie die Chat-Ansicht.
+ */
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * Debugging-Tag für Logging-Zwecke.
+     */
     private static final String TAG = "MainActivity";
+
+    /**
+     * Instanz des BluetoothManagers für die Verwaltung der Bluetooth-Funktionalität.
+     */
     private BluetoothManager bluetoothManager;
+
+    /**
+     * Instanz des MessageControllers für die Verwaltung der Nachrichten.
+     */
     private MessageController messageController;
 
+    /**
+     * Name des ersten simulierten Geräts.
+     */
     private static final String DEVICE1_NAME = "SimuliertesGerät1";
+
+    /**
+     * Name des zweiten simulierten Geräts.
+     */
     private static final String DEVICE2_NAME = "SimuliertesGerät2";
 
+    /**
+     * Initialisiert die Aktivität, den BluetoothManager und den MessageController.
+     * Startet die Simulation von Bluetooth-Verbindung und Datenaustausch.
+     *
+     * @param savedInstanceState Bundle mit gespeicherten Zuständen (falls vorhanden).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
         startBluetoothSimulation();
     }
 
+    /**
+     * Startet die Simulation der Bluetooth-Verbindung und des Datenaustauschs.
+     * Öffnet nach erfolgreicher Simulation die Chat-Ansicht.
+     */
     private void startBluetoothSimulation() {
         Log.d(TAG, "Starte Bluetooth-Simulation...");
 
@@ -42,13 +74,18 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Simuliere den Datenaustausch
+        // Simuliere den Datenaustausch zwischen den Geräten
         simulateDataExchange();
 
         // Öffne die Chat-Ansicht
         openChatDetailActivity();
     }
 
+    /**
+     * Simuliert die Verbindung zwischen zwei Geräten.
+     *
+     * @return true, wenn die Verbindung erfolgreich simuliert wurde, andernfalls false.
+     */
     private boolean simulateBluetoothConnection() {
         Log.d(TAG, "Verbinde " + DEVICE1_NAME + " mit " + DEVICE2_NAME + "...");
 
@@ -64,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Simuliert den Datenaustausch zwischen zwei Geräten.
+     * Fügt die ausgetauschten Nachrichten dem MessageController hinzu.
+     */
     private void simulateDataExchange() {
         Log.d(TAG, "Starte Datenaustausch zwischen " + DEVICE1_NAME + " und " + DEVICE2_NAME);
 
@@ -84,6 +125,9 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Datenaustausch abgeschlossen.");
     }
 
+    /**
+     * Öffnet die ChatDetailActivity, um die Nachrichten anzuzeigen.
+     */
     private void openChatDetailActivity() {
         Log.d(TAG, "Öffne Chat-Ansicht...");
         Intent intent = new Intent(this, ChatDetailActivity.class);

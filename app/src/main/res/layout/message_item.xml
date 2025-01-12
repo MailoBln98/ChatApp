@@ -6,6 +6,18 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
+    <!--
+        TextView zur Anzeige einer Nachricht innerhalb eines RecyclerView-Elements.
+        Dieses Element ist Teil eines Nachrichtenlayouts und dient der Darstellung
+        von Textinhalten wie Nachrichten oder Benachrichtigungen.
+
+        Eigenschaften:
+        - Breite wird dynamisch durch die Constraints auf Start und Ende angepasst.
+        - Höhe passt sich dem Textinhalt an.
+        - Schriftgröße ist auf 18sp gesetzt.
+        - Padding sorgt für Innenabstand um den Text.
+        - Zeigt maximal 2 Zeilen an, mit "..." bei Überlänge.
+    -->
     <TextView
         android:id="@+id/message_text"
         android:layout_width="0dp"

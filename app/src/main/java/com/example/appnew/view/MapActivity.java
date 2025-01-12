@@ -11,24 +11,68 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
 import com.example.appnew.R;
+import com.example.appnew.interfaces.ActionHandlerInterface;
 
-public class MapActivity extends AppCompatActivity {
+/**
+ * Die MapActivity zeigt eine Karte an, zentriert auf einen bestimmten Standort,
+ * und erlaubt die Interaktion mit Markern.
+ */
+public class MapActivity extends AppCompatActivity implements ActionHandlerInterface {
 
-    private static final double DEFAULT_ZOOM_LEVEL = 15.0;
+    private static final double DEFAULT_ZOOM_LEVEL = 15.0; // Standard-Zoomstufe für die Karte
     private MapView mapView;
 
+    /**
+     * Wird beim Erstellen der Aktivität aufgerufen.
+     * Initialisiert die Karte und lädt den Standort aus dem Intent.
+     *
+     * @param savedInstanceState Das Bundle mit dem vorherigen Zustand der Aktivität, falls vorhanden.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initialize(savedInstanceState); // Verwende die initialize-Methode
+    }
+
+    /**
+     * Initialisiert die Aktivität. Diese Methode wird in onCreate aufgerufen.
+     *
+     * @param savedInstanceState Das Bundle mit dem vorherigen Zustand der Aktivität, falls vorhanden.
+     */
+    @Override
+    public void initialize(Bundle savedInstanceState) {
         setContentView(R.layout.activity_map);
 
-        // OSMdroid-Konfiguration laden
+        // Konfiguration für OSMdroid laden
         Configuration.getInstance().load(this, getPreferences(MODE_PRIVATE));
 
-        mapView = findViewById(R.id.map);
-        mapView.setMultiTouchControls(true);
+        setupViews();
+        setupListeners();
+        loadLocationFromIntent();
+    }
 
-        // Standort aus Intent abrufen
+    /**
+     * Initialisiert die Views der Karte und aktiviert Multi-Touch-Steuerung.
+     */
+    private void setupViews() {
+        mapView = findViewById(R.id.map);
+        mapView.setMultiTouchControls(true); // Multi-Touch-Steuerung aktivieren
+    }
+
+    /**
+     * Initialisiert die Event-Listener, wie z. B. für den Zurück-Button.
+     */
+    private void setupListeners() {
+        findViewById(R.id.back_button).setOnClickListener(v -> {
+            finish(); // Schließt die aktuelle Aktivität
+        });
+    }
+
+    /**
+     * Lädt den Standort aus dem Intent und zentriert die Karte darauf.
+     * Fügt einen Marker hinzu, falls ein gültiger Standort vorhanden ist.
+     */
+    private void loadLocationFromIntent() {
         String location = getIntent().getStringExtra("location");
         if (location != null && !location.isEmpty()) {
             try {
@@ -36,8 +80,9 @@ public class MapActivity extends AppCompatActivity {
                 double latitude = Double.parseDouble(latLng[0]);
                 double longitude = Double.parseDouble(latLng[1]);
 
-                // Karte zentrieren
                 GeoPoint geoPoint = new GeoPoint(latitude, longitude);
+
+                // Karte zentrieren
                 mapView.getController().setZoom(DEFAULT_ZOOM_LEVEL);
                 mapView.getController().setCenter(geoPoint);
 
@@ -49,31 +94,36 @@ public class MapActivity extends AppCompatActivity {
 
             } catch (Exception e) {
                 Toast.makeText(this, "Ungültige Standortdaten", Toast.LENGTH_SHORT).show();
-                finish();
+                finish(); // Schließt die Aktivität
             }
         } else {
             Toast.makeText(this, "Kein Standort verfügbar", Toast.LENGTH_SHORT).show();
-            finish();
+            finish(); // Schließt die Aktivität
         }
-
-        // Back-Button Funktionalität
-        findViewById(R.id.back_button).setOnClickListener(v -> {
-            finish(); // Schließt die aktuelle Aktivität
-        });
     }
 
+    /**
+     * Ruft den Resume-Zustand der Karte auf, wenn die Aktivität fortgesetzt wird.
+     */
     @Override
     protected void onResume() {
         super.onResume();
         mapView.onResume();
     }
 
+    /**
+     * Pausiert die Karte, wenn die Aktivität pausiert wird.
+     */
     @Override
     protected void onPause() {
         super.onPause();
         mapView.onPause();
     }
 
+    /**
+     * Handhabung des Zurück-Buttons. Zeigt eine Toast-Nachricht an und
+     * ruft die Standard-Zurück-Logik auf.
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed();

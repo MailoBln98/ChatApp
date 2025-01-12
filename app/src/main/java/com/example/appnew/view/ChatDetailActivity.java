@@ -3,7 +3,6 @@ package com.example.appnew.view;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -15,35 +14,105 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.appnew.R;
 import com.example.appnew.controller.LocationProvider;
 import com.example.appnew.controller.MessageController;
+import com.example.appnew.interfaces.ActionHandlerInterface;
 import com.example.appnew.model.Message;
 
-public class ChatDetailActivity extends AppCompatActivity {
+/**
+ * Die ChatDetailActivity steuert die Detailansicht eines Chats.
+ * Diese Aktivität ermöglicht es dem Benutzer, Nachrichten anzuzeigen, neue Nachrichten zu senden
+ * und den aktuellen Standort zu teilen.
+ */
+public class ChatDetailActivity extends AppCompatActivity implements ActionHandlerInterface {
 
+    /**
+     * Debugging-Tag für Log-Ausgaben.
+     */
     private static final String TAG = "ChatDetailActivity";
 
+    /**
+     * RecyclerView zum Anzeigen von Chat-Nachrichten.
+     */
     private RecyclerView chatRecyclerView;
+
+    /**
+     * Eingabefeld für das Schreiben von Nachrichten.
+     */
     private EditText messageInput;
+
+    /**
+     * Button zum Senden von Nachrichten.
+     */
     private Button sendButton;
+
+    /**
+     * Button zum Teilen des aktuellen Standorts.
+     */
     private Button sendLocationButton;
+
+    /**
+     * Adapter zur Verwaltung der Nachrichtenanzeige in der RecyclerView.
+     */
     private MessageAdapter messageAdapter;
+
+    /**
+     * Controller für die Verwaltung von Nachrichtenoperationen.
+     */
     private MessageController messageController;
 
+    /**
+     * Wird beim Erstellen der Aktivität aufgerufen und initialisiert die notwendigen Komponenten.
+     *
+     * @param savedInstanceState Das Bundle mit gespeicherten Zuständen (falls vorhanden).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initialize(savedInstanceState);
+    }
+
+    /**
+     * Initialisiert die Aktivität, einschließlich der Einrichtung von Views, Listenern
+     * und der Datenlogik.
+     *
+     * @param savedInstanceState Das Bundle mit gespeicherten Zuständen.
+     */
+    @Override
+    public void initialize(Bundle savedInstanceState) {
         setContentView(R.layout.activity_chat_detail);
 
-        // Initialisiere Views
+        // Setup der Views
+        setupViews();
+
+        // Setup der Listener
+        setupListeners();
+
+        // Nachrichten laden und anzeigen
+        loadMessages();
+    }
+
+    /**
+     * Richtet alle benötigten Views ein, um die Benutzeroberfläche korrekt darzustellen.
+     */
+    private void setupViews() {
         chatRecyclerView = findViewById(R.id.chat_recycler_view);
         messageInput = findViewById(R.id.message_input);
         sendButton = findViewById(R.id.send_button);
         sendLocationButton = findViewById(R.id.send_location_button);
 
-        // Initialisiere Controller und Adapter
+        // Initialisiere den Nachrichtencontroller und Adapter
         messageController = new MessageController(this);
         messageAdapter = new MessageAdapter();
 
-        // Setze Klick-Listener für Nachrichten
+        // RecyclerView-Konfiguration
+        chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        chatRecyclerView.setAdapter(messageAdapter);
+    }
+
+    /**
+     * Richtet die Listener für Benutzerinteraktionen ein.
+     */
+    private void setupListeners() {
+        // Listener für Nachrichtenklicks
         messageAdapter.setOnMessageClickListener(message -> {
             if (message.getLocation() != null) {
                 Intent intent = new Intent(ChatDetailActivity.this, MapActivity.class);
@@ -52,14 +121,7 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
         });
 
-        // RecyclerView konfigurieren
-        chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        chatRecyclerView.setAdapter(messageAdapter);
-
-        // Nachrichten laden
-        loadMessages();
-
-        // Klick-Listener für Buttons
+        // Listener für den Button zum Senden von Nachrichten
         sendButton.setOnClickListener(v -> {
             String messageText = messageInput.getText().toString();
             if (!messageText.isEmpty()) {
@@ -69,9 +131,13 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
         });
 
+        // Listener für den Button zum Teilen des Standorts
         sendLocationButton.setOnClickListener(v -> sendCurrentLocation());
     }
 
+    /**
+     * Lädt Nachrichten aus der Datenbank und zeigt sie in der RecyclerView an.
+     */
     private void loadMessages() {
         messageController.getAllMessages().observe(this, messages -> {
             if (messages != null) {
@@ -80,12 +146,20 @@ public class ChatDetailActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Erstellt eine neue Nachricht und speichert sie in der Datenbank.
+     *
+     * @param messageText Der Inhalt der Nachricht, die gesendet werden soll.
+     */
     private void sendMessage(String messageText) {
         Message message = new Message("User1", messageText, System.currentTimeMillis());
         messageController.addMessage(message);
-        messageInput.setText("");
+        messageInput.setText(""); // Leert das Eingabefeld nach dem Senden
     }
 
+    /**
+     * Teilt den aktuellen Standort des Benutzers als Nachricht.
+     */
     private void sendCurrentLocation() {
         LocationProvider locationProvider = new LocationProvider(this);
 

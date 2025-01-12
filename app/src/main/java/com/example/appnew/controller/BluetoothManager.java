@@ -10,6 +10,8 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
+import com.example.appnew.interfaces.ConnectionManagerInterface;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,7 +20,7 @@ import java.util.UUID;
 /**
  * Klasse zur Verwaltung von Bluetooth-Verbindungen und -Kommunikation.
  */
-public class BluetoothManager {
+public class BluetoothManager implements ConnectionManagerInterface {
     private final BluetoothAdapter bluetoothAdapter;
     private final Context context;
     private BluetoothSocket bluetoothSocket;
@@ -154,5 +156,10 @@ public class BluetoothManager {
 
     public boolean isConnected() {
         return bluetoothSocket != null && bluetoothSocket.isConnected();
+    }
+
+    @Override
+    public boolean isServiceAvailable() {
+        return isBluetoothEnabled();
     }
 }

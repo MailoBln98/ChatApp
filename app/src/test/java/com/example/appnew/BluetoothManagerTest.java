@@ -13,31 +13,48 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 
+/**
+ * Testklasse für die `BluetoothManager`-Klasse.
+ * Diese Klasse stellt sicher, dass der Konstruktor und die Initialisierung des BluetoothManagers korrekt funktionieren.
+ */
 public class BluetoothManagerTest {
 
+    /**
+     * Mock-Objekt für den Android-Context.
+     */
     private Context mockContext;
 
+    /**
+     * Richtet die Testumgebung ein, indem ein Mock-Context erstellt wird.
+     */
     @Before
     public void setUp() {
-        // Mock Context
+        // Initialisiere ein Mock-Objekt für den Context
         mockContext = mock(Context.class);
     }
 
+    /**
+     * Testet den Konstruktor und die Initialisierung des `BluetoothManager`.
+     * Dieser Test überprüft, ob die erforderlichen Felder korrekt initialisiert werden.
+     */
     @Test
     public void testConstructor_initialization() {
-        // Mock static method BluetoothAdapter.getDefaultAdapter()
+        // Mocken der statischen Methode BluetoothAdapter.getDefaultAdapter()
         try (MockedStatic<BluetoothAdapter> mockedBluetoothAdapter = mockStatic(BluetoothAdapter.class)) {
+            // Erstelle ein Mock-Objekt für den BluetoothAdapter
             BluetoothAdapter mockBluetoothAdapter = mock(BluetoothAdapter.class);
+
+            // Lege fest, dass BluetoothAdapter.getDefaultAdapter() das Mock-Objekt zurückgibt
             mockedBluetoothAdapter.when(BluetoothAdapter::getDefaultAdapter).thenReturn(mockBluetoothAdapter);
 
-            // Create an instance of BluetoothManager
+            // Erstelle eine Instanz des BluetoothManagers
             BluetoothManager bluetoothManager = new BluetoothManager(mockContext);
 
-            // Verify that the context is set correctly
-            assertNotNull("Context should be initialized", bluetoothManager);
+            // Überprüfe, ob der Context korrekt initialisiert wurde
+            assertNotNull("Der Kontext sollte initialisiert sein", bluetoothManager);
 
-            // Verify that the BluetoothAdapter is initialized
-            assertNotNull("BluetoothAdapter should be initialized", BluetoothAdapter.getDefaultAdapter());
+            // Überprüfe, ob der BluetoothAdapter korrekt initialisiert wurde
+            assertNotNull("Der BluetoothAdapter sollte initialisiert sein", BluetoothAdapter.getDefaultAdapter());
         }
     }
 }

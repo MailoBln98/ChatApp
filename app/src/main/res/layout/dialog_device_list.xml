@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Progress Bar -->
+    <!-- Fortschrittsanzeige -->
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ListView for Paired Devices -->
+    <!-- Liste der gekoppelten Geräte -->
     <ListView
         android:id="@+id/paired_devices_list"
         android:layout_width="0dp"
@@ -24,7 +24,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ListView for Available Devices -->
+    <!-- Liste der verfügbaren Geräte -->
     <ListView
         android:id="@+id/available_devices_list"
         android:layout_width="0dp"
@@ -34,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Cancel Button -->
+    <!-- Abbrechen-Button -->
     <Button
         android:id="@+id/cancel_button"
         android:layout_width="wrap_content"

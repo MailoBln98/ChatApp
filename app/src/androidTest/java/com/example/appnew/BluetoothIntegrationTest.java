@@ -19,10 +19,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/**
+ * Integrationstest für Bluetooth-Funktionalitäten in der DeviceListActivity.
+ * Der Test überprüft die Funktionalität der Geräteanzeige und die Einhaltung der Berechtigungen.
+ */
 @RunWith(AndroidJUnit4.class)
 public class BluetoothIntegrationTest {
 
-    // Berechtigungen während der Tests automatisch gewähren
+    /**
+     * Regel, um erforderliche Berechtigungen während der Tests automatisch zu gewähren.
+     */
     @Rule
     public GrantPermissionRule bluetoothPermissionRule = GrantPermissionRule.grant(
             Manifest.permission.BLUETOOTH,
@@ -33,21 +39,30 @@ public class BluetoothIntegrationTest {
             Manifest.permission.ACCESS_COARSE_LOCATION
     );
 
+    /**
+     * Setup-Methode, die vor jedem Testfall ausgeführt wird.
+     * Startet die DeviceListActivity und fügt Testdaten hinzu.
+     */
     @Before
     public void setUp() {
-        // Starte die DeviceListActivity
+        // Startet die DeviceListActivity im Testmodus
         ActivityScenario<DeviceListActivity> scenario = ActivityScenario.launch(DeviceListActivity.class);
 
-        // Füge Testdaten hinzu
+        // Fügt simulierte Testdaten für gekoppelte und verfügbare Geräte hinzu
         scenario.onActivity(activity -> {
+            // Testdaten für gekoppelte Geräte
             activity.getPairedDevicesAdapter().add("TestDevice\n00:11:22:33:44:55");
+            // Testdaten für verfügbare Geräte
             activity.getAvailableDevicesAdapter().add("MockDevice\n66:77:88:99:AA:BB");
         });
     }
 
+    /**
+     * Testfall, der überprüft, ob das MockDevice in der Liste der verfügbaren Geräte angezeigt wird.
+     */
     @Test
     public void testAvailableDevices() {
-        // Überprüfe, ob das MockDevice in der Liste der verfügbaren Geräte angezeigt wird
+        // Überprüft, ob das erste Gerät in der Liste der verfügbaren Geräte angezeigt wird
         onData(anything())
                 .inAdapterView(withId(R.id.available_devices_list))
                 .atPosition(0)

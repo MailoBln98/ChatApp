@@ -23,12 +23,13 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.example.appnew.R;
+import com.example.appnew.interfaces.ActionHandlerInterface;
 import com.google.android.apps.common.testing.accessibility.framework.BuildConfig;
 
 import java.util.ArrayList;
 import java.util.Set;
 
-public class DeviceListActivity extends Activity {
+public class DeviceListActivity extends Activity implements ActionHandlerInterface {
 
     private static final int REQUEST_CODE_BLUETOOTH_PERMISSIONS = 1;
     private boolean isPermissionRequested = false;
@@ -61,17 +62,27 @@ public class DeviceListActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initialize(savedInstanceState); // Verwende die neue Methode initialize
+    }
+
+    /**
+     * Initialisiert die Aktivität. Diese Methode wird in onCreate aufgerufen.
+     *
+     * @param savedInstanceState Bundle mit gespeicherten Zuständen der Aktivität, falls verfügbar.
+     */
+    @Override
+    public void initialize(Bundle savedInstanceState) {
         setContentView(R.layout.dialog_device_list);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
-            Toast.makeText(this, "Bluetooth not supported on this device", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Bluetooth wird auf diesem Gerät nicht unterstützt", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
+        // UI-Komponenten initialisieren
         progressBar = findViewById(R.id.progress_bar);
-
         pairedDevicesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         availableDevicesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         availableDevices = new ArrayList<>();
@@ -87,15 +98,18 @@ public class DeviceListActivity extends Activity {
 
         findViewById(R.id.cancel_button).setOnClickListener(v -> finish());
 
-        // Lade Testdaten, wenn Debug-Modus aktiv ist
+        // Mock-Daten im Debug-Modus laden
         loadMockDataForTesting();
 
-        // Starte die Berechtigungsprüfung
+        // Bluetooth-Berechtigungen anfordern
         if (!isPermissionRequested) {
             requestBluetoothPermissions();
         }
     }
 
+    /**
+     * Fordert die erforderlichen Berechtigungen für die Bluetooth-Funktionalität an.
+     */
     private void requestBluetoothPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
@@ -109,9 +123,12 @@ public class DeviceListActivity extends Activity {
         }
     }
 
+    /**
+     * Zeigt die gepairten Bluetooth-Geräte an.
+     */
     private void displayPairedDevices() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Bluetooth connect permission not granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Berechtigung zum Verbinden von Bluetooth-Geräten fehlt", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -121,10 +138,13 @@ public class DeviceListActivity extends Activity {
                 pairedDevicesAdapter.add(device.getName() + "\n" + device.getAddress());
             }
         } else {
-            pairedDevicesAdapter.add("No paired devices found");
+            pairedDevicesAdapter.add("Keine gepairten Geräte gefunden");
         }
     }
 
+    /**
+     * Lädt Mock-Daten für Testzwecke im Debug-Modus.
+     */
     private void loadMockDataForTesting() {
         if (BuildConfig.DEBUG) {
             pairedDevicesAdapter.add("TestDevice\n00:11:22:33:44:55");
@@ -132,11 +152,14 @@ public class DeviceListActivity extends Activity {
         }
     }
 
+    /**
+     * Startet die Suche nach verfügbaren Bluetooth-Geräten.
+     */
     private void discoverDevices() {
         progressBar.setVisibility(View.VISIBLE);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Bluetooth scan permission not granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Berechtigung zum Scannen von Bluetooth-Geräten fehlt", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -148,7 +171,7 @@ public class DeviceListActivity extends Activity {
     @SuppressLint("MissingPermission")
     private final AdapterView.OnItemClickListener deviceClickListener = (adapterView, view, position, id) -> {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Bluetooth connect permission not granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Berechtigung zum Verbinden von Bluetooth-Geräten fehlt", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -168,10 +191,17 @@ public class DeviceListActivity extends Activity {
         try {
             unregisterReceiver(broadcastReceiver);
         } catch (IllegalArgumentException e) {
-            // Receiver not registered
+            // Receiver war nicht registriert
         }
     }
 
+    /**
+     * Verarbeitet die Ergebnisse von Berechtigungsanforderungen.
+     *
+     * @param requestCode  Der Anforderungscode.
+     * @param permissions  Die angeforderten Berechtigungen.
+     * @param grantResults Die Ergebnisse der Berechtigungsanforderung.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -187,15 +217,25 @@ public class DeviceListActivity extends Activity {
                 displayPairedDevices();
                 discoverDevices();
             } else {
-                Toast.makeText(this, "Permissions denied. Some features may not work.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Berechtigungen abgelehnt. Einige Funktionen sind nicht verfügbar.", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    /**
+     * Gibt den Adapter für gekoppelte Geräte zurück.
+     *
+     * @return Der Adapter für gekoppelte Geräte.
+     */
     public ArrayAdapter<String> getPairedDevicesAdapter() {
         return pairedDevicesAdapter;
     }
 
+    /**
+     * Gibt den Adapter für verfügbare Geräte zurück.
+     *
+     * @return Der Adapter für verfügbare Geräte.
+     */
     public ArrayAdapter<String> getAvailableDevicesAdapter() {
         return availableDevicesAdapter;
     }

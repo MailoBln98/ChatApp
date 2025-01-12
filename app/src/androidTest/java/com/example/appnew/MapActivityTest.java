@@ -17,40 +17,48 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+/**
+ * Testklasse für die `MapActivity`.
+ * Diese Klasse überprüft, ob die `MapActivity` korrekt mit gültigen und ungültigen Standorten funktioniert.
+ */
 @RunWith(AndroidJUnit4.class)
 public class MapActivityTest {
 
+    /**
+     * Regel für die `MapActivity`, um sie mit einem Intent zu starten.
+     * Die Aktivität wird nicht automatisch gestartet (dritter Parameter ist `false`).
+     */
     @Rule
     public ActivityTestRule<MapActivity> activityRule =
             new ActivityTestRule<>(MapActivity.class, true, false);
 
-
-
     /**
-     * Testet die Kartenansicht mit einem gültigen Standort.
+     * Testet, ob die Karte korrekt angezeigt wird, wenn ein gültiger Standort übergeben wird.
      */
     @Test
     public void testValidLocation() {
-        // Intent mit gültigem Standort
+        // Erstelle ein Intent mit einem gültigen Standort
         Intent intent = new Intent();
-        intent.putExtra("location", "52.5200,13.4050");
-        activityRule.launchActivity(intent);
+        intent.putExtra("location", "52.5200,13.4050"); // Beispielkoordinaten für Berlin
+        activityRule.launchActivity(intent); // Starte die Aktivität mit dem Intent
 
         // Überprüfen, ob die Karte sichtbar ist
         onView(withId(R.id.map)).check(matches(isDisplayed()));
     }
 
     /**
-     * Testet die Kartenansicht ohne gültigen Standort.
+     * Testet, wie die Aktivität auf einen ungültigen Standort reagiert.
      */
     @Test
     public void testInvalidLocation() {
-        // Intent ohne Standort
+        // Erstelle ein Intent ohne gültigen Standort
         Intent intent = new Intent();
-        intent.putExtra("location", "");
-        activityRule.launchActivity(intent);
+        intent.putExtra("location", ""); // Leerer Standort
+        activityRule.launchActivity(intent); // Starte die Aktivität mit dem Intent
 
-        // Überprüfen, ob die Activity beendet wurde
-        // (z. B. durch finish() bei Fehler)
+        // Hinweis: Espresso bietet keine direkte Möglichkeit, zu testen, ob `finish()` aufgerufen wurde.
+        // Alternativ kann hier überprüft werden, ob keine Karte angezeigt wird, oder ein Fehler-Toast sichtbar ist.
+        // Zum Beispiel:
+        // onView(withText("Kein Standort verfügbar")).check(matches(isDisplayed()));
     }
 }

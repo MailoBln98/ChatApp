@@ -20,15 +20,19 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
-import static androidx.test.espresso.action.ViewActions.click;
-
 import static org.hamcrest.Matchers.containsString;
 
+/**
+ * Integrationstest für die DeviceListActivity.
+ * Dieser Test überprüft die Anzeige und Funktionalität von gekoppelten und verfügbaren Geräten.
+ */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class DeviceListActivityTest {
 
+    /**
+     * Automatische Erteilung der erforderlichen Berechtigungen für Bluetooth und Standort.
+     */
     @Rule
     public GrantPermissionRule permissionRule = GrantPermissionRule.grant(
             Manifest.permission.BLUETOOTH,
@@ -41,36 +45,50 @@ public class DeviceListActivityTest {
 
     private ActivityScenario<DeviceListActivity> scenario;
 
+    /**
+     * Setup-Methode, die vor jedem Test ausgeführt wird.
+     * Initialisiert die DeviceListActivity und fügt Testdaten hinzu.
+     */
     @Before
     public void setUp() {
+        // Starte die DeviceListActivity mit einem expliziten Intent
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.setClassName("com.example.appnew", "com.example.appnew.view.DeviceListActivity");
 
         scenario = ActivityScenario.launch(intent);
 
-        // Add mock data
+        // Füge Testdaten für gekoppelte und verfügbare Geräte hinzu
         scenario.onActivity(activity -> {
             activity.getPairedDevicesAdapter().add("TestDevice\n00:11:22:33:44:55");
             activity.getAvailableDevicesAdapter().add("MockDevice\n66:77:88:99:AA:BB");
         });
     }
 
+    /**
+     * Testet, ob gekoppelte Geräte korrekt in der Liste angezeigt werden.
+     */
     @Test
     public void testPairedDevicesDisplayed() {
+        // Überprüfe, ob die Liste für gekoppelte Geräte angezeigt wird
         onView(withId(R.id.paired_devices_list))
                 .check(matches(isDisplayed()));
 
+        // Überprüfe, ob das Testgerät in der Liste vorhanden ist
         onView(withText(containsString("TestDevice")))
                 .check(matches(isDisplayed()));
     }
 
+    /**
+     * Testet, ob verfügbare Geräte korrekt in der Liste angezeigt werden.
+     */
     @Test
     public void testAvailableDevicesDisplayed() {
+        // Überprüfe, ob die Liste für verfügbare Geräte angezeigt wird
         onView(withId(R.id.available_devices_list))
                 .check(matches(isDisplayed()));
 
+        // Überprüfe, ob das Mock-Gerät in der Liste vorhanden ist
         onView(withText(containsString("MockDevice")))
                 .check(matches(isDisplayed()));
     }
-
 }
