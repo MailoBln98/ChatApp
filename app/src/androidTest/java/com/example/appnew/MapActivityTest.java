@@ -56,9 +56,6 @@ public class MapActivityTest {
         intent.putExtra("location", ""); // Leerer Standort
         activityRule.launchActivity(intent); // Starte die Aktivität mit dem Intent
 
-        // Hinweis: Espresso bietet keine direkte Möglichkeit, zu testen, ob `finish()` aufgerufen wurde.
-        // Alternativ kann hier überprüft werden, ob keine Karte angezeigt wird, oder ein Fehler-Toast sichtbar ist.
-        // Zum Beispiel:
-        // onView(withText("Kein Standort verfügbar")).check(matches(isDisplayed()));
+
     }
 }
